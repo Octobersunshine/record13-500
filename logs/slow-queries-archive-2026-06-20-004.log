@@ -1,0 +1,1 @@
+{"timestamp":"2026-06-19T20:28:33.515Z","sql":"SELECT * FROM orders o JOIN order_items oi ON o.id = oi.order_id","executionTime":350,"threshold":100,"database":"unknown","application":"unknown","traceId":null,"parameters":null,"userId":null,"clientIp":null}

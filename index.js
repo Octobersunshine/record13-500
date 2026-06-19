@@ -8,7 +8,10 @@ const {
   getLogFileList,
   getLogStats,
   cleanupOldLogs,
-  deleteLogFile
+  deleteLogFile,
+  getSlowQueryStats,
+  getTopSlowQueries,
+  extractTableNames
 } = require('./utils/archiveLogger');
 
 const app = express();
@@ -208,6 +211,70 @@ app.post('/api/logs/cleanup', (req, res) => {
   }
 });
 
+app.get('/api/stats/by-table', (req, res) => {
+  const dateFrom = req.query.dateFrom || null;
+  const dateTo = req.query.dateTo || null;
+
+  try {
+    const stats = getSlowQueryStats(dateFrom, dateTo);
+    res.json({
+      success: true,
+      data: stats
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: err.message
+    });
+  }
+});
+
+app.get('/api/stats/top-slow', (req, res) => {
+  const limit = parseInt(req.query.limit) || 10;
+  const dateFrom = req.query.dateFrom || null;
+  const dateTo = req.query.dateTo || null;
+
+  try {
+    const result = getTopSlowQueries(limit, dateFrom, dateTo);
+    res.json({
+      success: true,
+      data: result
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: err.message
+    });
+  }
+});
+
+app.post('/api/utils/extract-tables', (req, res) => {
+  const { sql } = req.body;
+
+  if (!sql) {
+    return res.status(400).json({
+      success: false,
+      error: 'Missing required field: sql'
+    });
+  }
+
+  try {
+    const tables = extractTableNames(sql);
+    res.json({
+      success: true,
+      data: {
+        sql,
+        tables
+      }
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: err.message
+    });
+  }
+});
+
 app.get('/api/config', (req, res) => {
   res.json({
     success: true,
@@ -342,11 +409,15 @@ app.listen(PORT, () => {
   console.log(`  POST   /api/sql/monitor         - 上报单条 SQL`);
   console.log(`  POST   /api/sql/batch-monitor   - 批量上报 SQL`);
   console.log(`  GET    /api/sql/slow-queries    - 查询慢 SQL 日志`);
-  console.log(`\n  Log Management API:`);
+  console.log(`  Log Management API:`);
   console.log(`  GET    /api/logs/files          - 获取日志文件列表`);
   console.log(`  GET    /api/logs/stats          - 获取日志统计`);
   console.log(`  POST   /api/logs/cleanup        - 手动清理过期日志`);
   console.log(`  DELETE /api/logs/:filename      - 删除指定日志文件`);
+  console.log(`\n  Statistics API:`);
+  console.log(`  GET    /api/stats/by-table      - 按表分组慢查询统计`);
+  console.log(`  GET    /api/stats/top-slow      - 最慢 SQL 排行榜`);
+  console.log(`  POST   /api/utils/extract-tables- 解析 SQL 表名`);
   console.log(`\n  Config API:`);
   console.log(`  GET    /api/config              - 获取配置`);
   console.log(`  PUT    /api/config/threshold    - 修改慢查询阈值`);

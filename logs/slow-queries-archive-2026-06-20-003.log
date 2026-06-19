@@ -1,0 +1,3 @@
+{"timestamp":"2026-06-19T20:28:33.511Z","sql":"SELECT * FROM products ORDER BY created_at DESC","executionTime":400,"threshold":100,"database":"unknown","application":"unknown","traceId":null,"parameters":null,"userId":null,"clientIp":null}
+{"timestamp":"2026-06-19T20:28:33.513Z","sql":"UPDATE inventory SET quantity = quantity - 1","executionTime":220,"threshold":100,"database":"unknown","application":"unknown","traceId":null,"parameters":null,"userId":null,"clientIp":null}
+{"timestamp":"2026-06-19T20:28:33.514Z","sql":"SELECT * FROM users WHERE id = 456","executionTime":160,"threshold":100,"database":"unknown","application":"unknown","traceId":null,"parameters":null,"userId":null,"clientIp":null}
