@@ -1,0 +1,13 @@
+{
+  "name": "sql-monitor-service",
+  "version": "1.0.0",
+  "description": "Node.js service to monitor SQL execution and log slow queries",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
