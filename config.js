@@ -10,6 +10,14 @@ module.exports = {
   logging: {
     logDir: path.join(__dirname, 'logs'),
     archiveLogFile: 'slow-queries-archive.log',
-    maxLogFileSize: 10 * 1024 * 1024
+    maxLogFileSize: parseInt(process.env.MAX_LOG_FILE_SIZE) || 100 * 1024 * 1024,
+    rotation: {
+      enabled: true,
+      datePattern: 'YYYY-MM-DD',
+      maxFilesPerDay: 999,
+      retentionDays: parseInt(process.env.LOG_RETENTION_DAYS) || 30,
+      compressOldFiles: false,
+      autoCleanup: true
+    }
   }
 };
